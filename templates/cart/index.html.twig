@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Panier!{% endblock %}
+
+{% block content %}
+<h1 class="mt-5">Mon Panier</h1>
+{% if cart|length %}
+Retrouver l'ensemble des produits que vous aver ajouté à votre panier. 
+
+<table class="table table-hover mt-3">
+  <thead>
+    <tr>
+      <th scope="col">Produit</th>
+      <th scope="col">Quantité</th>
+      <th scope="col">Prix</th>
+      <th scope="col">Total</th>
+      <th scope="col">Supprimer</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% set total = null %}
+  {% for product in cart %}
+    <tr>
+      <th>
+          <img src="/uploads/{{ product.product.illustration }}" alt="{{ product.product.name }}" height="75px">
+          {{ product.product.name }}</th>
+      <td>
+           <a href="{{ path('decrease_to_cart', {'id' : product.product.id}) }}">
+                 <img src="{{ asset('assets/img/minus.png') }}" alt="Retirer de la quantité" height="25px">
+           </a>
+           x{{ product.quantite }}
+           <a href="{{ path('add_to_cart', {'id' : product.product.id}) }}">
+                 <img src="{{ asset('assets/img/plus.png') }}" alt="Ajouter à la quantité" height="25px">
+           </a>
+      </td>
+      <td> {{ (product.product.price/100) | number_format(2) }} €</td>
+      <td>{{ ((product.product.price * product.quantite)/100) | number_format(2) }} €</td>
+      <td>
+           <a href="{{ path('delete_to_cart', {'id' : product.product.id}) }}">
+           <img src="{{ asset('assets/img/trash-bin.png') }}" alt="" height="50px">
+           </a>
+      </td>
+    </tr>
+    {% set total = total + (product.product.price * product.quantite) %}
+  {% endfor %}
+  </tbody>
+</table> 
+
+<div class="text-right mb-3">
+   <b>Nombre de produit : {{ cart|length }}</b>  <br/>
+   <b>Total à payer : {{ ((total)/100) | number_format(2) }} € </b><br/>
+   <a href="" class="btn btn-success mt-2">Valider mon Panier</a>
+</div>
+{% else %}
+<hr>
+<p><b>Votre panier est vide pour le moment</b></p>
+{% endif %}
+{% endblock %}
